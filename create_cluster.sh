@@ -5,10 +5,25 @@
 
 # This script requires eksctl and kubectl to be installed and configured.
 
+set -e
+
 # Get the directory of the repo
 REPO="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-REPO=$(dirname "$REPO../")
-REPO=$(dirname "$REPO../")
+
+function print_usage() {
+    echo "Usage: create-cluster.sh --cluster_name <cluster_name> --region <region> --arn <arn>"
+    echo " --cluster_name: The name of the cluster to create"
+    echo " --region: The region to create the cluster in"
+    echo " --arn: The ARN of the IAM role that will be used to allow Cado Response to access the cluster"
+}
+
+function check_dependency() {
+    if ! command -v $1 &> /dev/null
+    then
+        echo "$1 could not be found. Install at $2"
+        exit
+    fi
+}
 
 # Handle the following arguments --cluster_name --region --arn
 while [[ $# -gt 0 ]]
@@ -18,52 +33,32 @@ key="$1"
 case $key in
     -c|--cluster_name)
     CLUSTER_NAME="$2"
-    shift # past argument
-    shift # past value
+    shift
+    shift
     ;;
     -r|--region)
     REGION="$2"
-    shift # past argument
-    shift # past value
+    shift
+    shift
     ;;
     -a|--arn)
     ARN="$2"
-    shift # past argument
-    shift # past value
+    shift
+    shift
     ;;
-    *)    # unknown option
+    *)
     echo "Unknown option: $1"
-    echo "Usage: create-cluster.sh --cluster_name <cluster_name> --region <region> --arn <arn>"
-    echo " --cluster_name: The name of the cluster to create"
-    echo " --region: The region to create the cluster in"
-    echo " --arn: The ARN of the IAM role that will be used to allow Cado Response to access the cluster"
+    print_usage
     exit 1
     ;;
 esac
 done
 
-# Check if eksctl is installed
-if ! command -v eksctl &> /dev/null
-then
-    echo "eksctl could not be found. Install at https://eksctl.io/"
-    exit
-fi
+check_dependency eksctl "https://eksctl.io/"
+check_dependency aws "https://aws.amazon.com/cli/"
+check_dependency kubectl "https://kubernetes.io/docs/reference/kubectl/"
 
-# Check if kubectl is installed
-if ! command -v kubectl &> /dev/null
-then
-    echo "kubectl could not be found. Install at https://kubernetes.io/docs/reference/kubectl/"
-    exit
-fi
-
-# Check if awscli is installed
-if ! command -v aws &> /dev/null
-then
-    echo "awscli could not be found. Install at https://aws.amazon.com/cli/"
-    exit
-fi
-
-echo "Creating cluster $CLUSTER_NAME in $REGION"
+echo "Creating cluster $CLUSTER_NAME in $REGION. This may take a while..."
 eksctl create cluster --region=$REGION --name=$CLUSTER_NAME --node-volume-size=8
 
 echo "Authenticating with cluster"
