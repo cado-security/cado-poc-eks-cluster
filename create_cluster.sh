@@ -5,6 +5,11 @@
 
 # This script requires eksctl and kubectl to be installed and configured.
 
+# Get the directory of the repo
+REPO="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+REPO=$(dirname "$REPO../")
+REPO=$(dirname "$REPO../")
+
 # Handle the following arguments --cluster_name --region --arn
 while [[ $# -gt 0 ]]
 do
@@ -40,21 +45,21 @@ done
 # Check if eksctl is installed
 if ! command -v eksctl &> /dev/null
 then
-    echo "eksctl could not be found"
+    echo "eksctl could not be found. Install at https://eksctl.io/"
     exit
 fi
 
 # Check if kubectl is installed
 if ! command -v kubectl &> /dev/null
 then
-    echo "kubectl could not be found"
+    echo "kubectl could not be found. Install at https://kubernetes.io/docs/reference/kubectl/"
     exit
 fi
 
 # Check if awscli is installed
 if ! command -v aws &> /dev/null
 then
-    echo "awscli could not be found"
+    echo "awscli could not be found. Install at https://aws.amazon.com/cli/"
     exit
 fi
 
@@ -68,8 +73,8 @@ echo "Creating the namespace for the cluster"
 kubectl create namespace cado-poc-cluster
 
 echo "Applying the deployment"
-kubectl apply -f deployment-manifest.yaml
-kubectl apply -f service-manifest.yaml
+kubectl apply -f $REPO/deployment-manifest.yaml
+kubectl apply -f $REPO/service-manifest.yaml
 
 echo "Attempting to create an iamidentitymapping for $ARN, if this goes wrong, make sure the ARN provided is correct"
 echo "This is going to use the system:masters group from RBAC. This is not intended for production use and is strictly for PoC purposes"
