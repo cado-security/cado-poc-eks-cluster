@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cado-poc-cluster-service
+  namespace: cado-poc-cluster
+  labels:
+    app: cado-poc-cluster-app
+spec:
+  selector:
+    app: cado-poc-cluster-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
