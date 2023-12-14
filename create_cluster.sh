@@ -74,8 +74,8 @@ echo "Creating the namespace for the cluster..."
 kubectl create namespace cado-poc-cluster
 
 echo "Applying the deployment..."
-kubectl apply -f $REPO/deployment-manifest.yaml
-kubectl apply -f $REPO/service-manifest.yaml
+kubectl apply -f $REPO/deployment-manifest.yml
+kubectl apply -f $REPO/service-manifest.yml
 
 echo "Attempting to create an iamidentitymapping for $ARN, if this goes wrong, make sure the ARN provided is correct."
 echo "This is going to use the system:masters group from RBAC. This is not intended for production use and is strictly for PoC purposes."
