@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cado-eks-cluster-role-binding
+subjects:
+- kind: Group
+  name: cado
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: cado-eks-cluster-role
+  apiGroup: rbac.authorization.k8s.io
