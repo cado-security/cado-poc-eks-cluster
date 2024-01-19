@@ -18,7 +18,7 @@ function print_usage() {
 }
 
 function check_dependency() {
-    if ! command -v $1 &> /dev/null
+    if ! command -v "$1" &> /dev/null
     then
         echo "$1 could not be found. Install at $2."
         exit
@@ -65,18 +65,22 @@ if [ ! -f ~/.aws/credentials ]; then
 fi
 
 echo "Creating cluster $CLUSTER_NAME in $REGION. This may take a while..."
-eksctl create cluster --region=$REGION --name=$CLUSTER_NAME --node-volume-size=8
+eksctl create cluster --region="$REGION" --name="$CLUSTER_NAME" --node-volume-size=8
 
 echo "Authenticating with cluster..."
-aws eks --region $REGION update-kubeconfig --name $CLUSTER_NAME
+aws eks --region "$REGION" update-kubeconfig --name "$CLUSTER_NAME"
 
 echo "Creating the namespace for the cluster..."
 kubectl create namespace cado-poc-cluster
 
 echo "Applying the deployment..."
-kubectl apply -f $REPO/deployment-manifest.yml
-kubectl apply -f $REPO/service-manifest.yml
+kubectl apply -f "$REPO"/deployment-manifest.yml
+kubectl apply -f "$REPO"/service-manifest.yml
+
+echo "Applying RBAC roles..."
+kubectl auth reconcile -f "$REPO"/cado-eks-cluster-role.yml
+kubectl auth reconcile -f "$REPO"/cado-eks-cluster-role-binding.yml
 
 echo "Attempting to create an iamidentitymapping for $ARN, if this goes wrong, make sure the ARN provided is correct."
 echo "This is going to use the system:masters group from RBAC. This is not intended for production use and is strictly for PoC purposes."
-eksctl create iamidentitymapping --cluster $CLUSTER_NAME --arn $ARN --region $REGION --group system:masters
+eksctl create iamidentitymapping --cluster "$CLUSTER_NAME" --arn "$ARN" --region "$REGION" --group cado
