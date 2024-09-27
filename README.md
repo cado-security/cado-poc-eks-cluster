@@ -6,6 +6,15 @@ A version of this cluster runs as part of our automated testing against each ver
 
 The cluster is a basic `nginx` webserver cluster, using a smaller node pool size to reduce costs. You can run our [CloudAndContainerCompromiseSimulator](https://github.com/cado-security/CloudAndContainerCompromiseSimulator) inside the cluster to get more interesting results inside the Cado platform.
 
+The RBAC is enforced with the `cado` group, which allows the following permissions, which are required for acquisitions with EKS:
+
+| API       | Permissions |
+|-----------|-------------|
+| pods      | get, list   |
+| pods/exec | create, get |
+
+For more information on the EKS acquisition feature available in the platform, please see [our documentation](https://docs.cadosecurity.com/cado-response/discovery-import/import/aws/aws-eks).
+
 ## Example
 
 If you want to use this script to deploy the `TestCluster` in `us-east-2` in the AWS account: `123456789012`, and I have the `arn:aws:iam::123456789012:role/MyAccountRole` role in the Cado platform. Then you would run the script like so:
