@@ -2,6 +2,8 @@
 
 This repository contains a script, and instructions to create a simple EKS cluster for testing EKS acquisition in the Cado platform.
 
+A version of this cluster runs as part of our automated testing against each version of the platform.
+
 The cluster is a basic `nginx` webserver cluster, using a smaller node pool size to reduce costs. You can run our [CloudAndContainerCompromiseSimulator](https://github.com/cado-security/CloudAndContainerCompromiseSimulator) inside the cluster to get more interesting results inside the Cado platform.
 
 ## Example
