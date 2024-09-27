@@ -65,7 +65,7 @@ if [ ! -f ~/.aws/credentials ]; then
 fi
 
 echo "Creating cluster $CLUSTER_NAME in $REGION. This may take a while..."
-eksctl create cluster --region="$REGION" --name="$CLUSTER_NAME" --node-volume-size=8
+eksctl create cluster --region="$REGION" --name="$CLUSTER_NAME" --node-volume-size=64
 
 echo "Authenticating with cluster..."
 aws eks --region "$REGION" update-kubeconfig --name "$CLUSTER_NAME"
